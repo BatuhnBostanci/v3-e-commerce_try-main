@@ -15,6 +15,9 @@ public class Category {
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Product> products;
 
+    @ManyToOne
+    @JoinColumn(name = "magaza_id")  // Foreign key olarak mağazayı işaret eder
+    private Magaza magaza;
 
     public Long getId() {
         return id;
@@ -40,11 +43,19 @@ public class Category {
         this.products = products;
     }
 
-    public void setName(String category) {
+    public Magaza getMagaza() {
+        return magaza;
+    }
 
+    public void setMagaza(Magaza magaza) {
+        this.magaza = magaza;
+    }
+
+    public void setName(String category) {
+        this.categoryName = category;
     }
 
     public String getName() {
-        return null;
+        return this.categoryName;
     }
 }

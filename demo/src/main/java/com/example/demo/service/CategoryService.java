@@ -12,48 +12,82 @@ import java.util.List;
 
 @Service
 public class CategoryService {
-    @Autowired
-    private CategoryRepository productCategoryRepository;
 
-    public CategoryResponse createProductCategory(CategoryRequest request) {
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
+    private MagazaRepository magazaRepository;
+
+    /**
+     * Yeni bir kategori oluşturur.
+     */
+    public CategoryResponse createCategory(CategoryRequest request, Long magazaId) {
+        Magaza magaza = magazaRepository.findById(magazaId)
+                .orElseThrow(() -> new RuntimeException("Mağaza bulunamadı"));
+
         Category category = toEntity(request);
-        productCategoryRepository.save(category);
+        category.setMagaza(magaza);  // Kategoriyi mağazaya bağlama
+        categoryRepository.save(category);
         return toResponse(category);
     }
 
-    public void deleteProductCategory(int id) {
-        productCategoryRepository.deleteById((long) id);
-    }
-
-    public <CategoryResponse> List<CategoryResponse> getAllProductCategories() {
-        List<Category> categories = productCategoryRepository.findAll();
-        List<CategoryResponse> productCategoryResponses = new ArrayList<>();
-
+    /**
+     * Tüm kategorileri döner.
+     */
+    public List<CategoryResponse> getAllCategories() {
+        List<Category> categories = categoryRepository.findAll();
+        List<CategoryResponse> categoryResponses = new ArrayList<>();
         for (Category category : categories) {
-            productCategoryResponses.add((CategoryResponse) toResponse(category));
+            categoryResponses.add(toResponse(category));
         }
-        return productCategoryResponses;
+        return categoryResponses;
     }
 
-    public CategoryResponse updateProductCategory(CategoryRequest request, int id) {
-        Category existingCategory = productCategoryRepository.findById((long) id).orElseThrow(() -> new RuntimeException("Product category not found"));
-
-        existingCategory.setName(request.getCategory());
-
-        Category save = productCategoryRepository.save(existingCategory);
-
+    /**
+     * Kategori günceller.
+     */
+    public CategoryResponse updateCategory(CategoryRequest request, Long id) {
+        Category existingCategory = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Kategori bulunamadı"));
+        existingCategory.setCategoryName(request.getCategory());
+        categoryRepository.save(existingCategory);
         return toResponse(existingCategory);
     }
 
+    /**
+     * Kategori siler.
+     */
+    public void deleteCategory(Long id) {
+        categoryRepository.deleteById(id);
+    }
+
+    // Request ve Response dönüştürücüler
     public Category toEntity(CategoryRequest request) {
         Category category = new Category();
-        category.setName(request.getCategory());
+        category.setCategoryName(request.getCategory());
         return category;
     }
 
     public CategoryResponse toResponse(Category category) {
-        CategoryResponse category1 = new CategoryResponse();
-        category1.setProductCategory(category.getName());
-        return (category1);
+        CategoryResponse response = new CategoryResponse();
+        response.setCategoryName(category.getCategoryName());
+        return response;
+    }
+
+    public CategoryResponse createProductCategory(CategoryRequest request) {
+        return null;
+    }
+
+    public List<CategoryResponse> getAllProductCategories() {
+        return null;
+    }
+
+    public CategoryResponse updateProductCategory(CategoryRequest request, int id) {
+        return null;
+    }
+
+    public void deleteProductCategory(int id) {
+
     }
 }

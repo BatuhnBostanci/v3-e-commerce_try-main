@@ -11,9 +11,8 @@ public class Magaza {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany
+    @OneToMany(mappedBy = "magaza", cascade = CascadeType.ALL)
     private List<Category> categories;
-
 
     public Long getId() {
         return id;

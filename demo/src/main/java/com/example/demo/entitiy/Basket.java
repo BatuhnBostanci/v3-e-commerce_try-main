@@ -10,27 +10,32 @@ public class Basket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId;
     private double basketAmount;
 
     @OneToMany(mappedBy = "basket", cascade = CascadeType.ALL)
     private List<BasketProduct> basketProducts;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
+    public Basket() {
+    }
+
+    public Basket(Long id, double basketAmount, List<BasketProduct> basketProducts, User user) {
+        this.id = id;
+        this.basketAmount = basketAmount;
+        this.basketProducts = basketProducts;
+        this.user = user;
+    }
+
+    // Getter ve Setter'lar
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
     }
 
     public double getBasketAmount() {
@@ -47,5 +52,13 @@ public class Basket {
 
     public void setBasketProducts(List<BasketProduct> basketProducts) {
         this.basketProducts = basketProducts;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

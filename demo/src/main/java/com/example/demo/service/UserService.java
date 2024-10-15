@@ -17,40 +17,59 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private BasketRepository basketRepository;
 
-    public User toEntity(UserRequest userRequest) {
-        User user = new User();
-        user.setUseremail(userRequest.getEmail());
-        user.setUserpassword(userRequest.getPassword());
-        user.setUserfullname(userRequest.getUsername());
-        return user;
-    }
-
-    public UserResponse toResponse(User user) {
-        UserResponse userResponse = new UserResponse();
-        userResponse.setName(user.getUserfullname());
-        return userResponse;
-    }
-
+    /**
+     * Yeni bir kullanıcı oluşturur ve ona boş bir sepet atar.
+     */
     public UserResponse createUser(UserRequest userRequest) {
         User user = toEntity(userRequest);
+
+        // Kullanıcıya boş bir sepet atıyoruz
         Basket basket = new Basket();
         basketRepository.save(basket);
         user.setUserBasket(basket);
+
         userRepository.save(user);
         return toResponse(user);
     }
 
-
-    public UserResponse getAllUsers() {
+    /**
+     * Tüm kullanıcıları getirir.
+     */
+    public List<UserResponse> getAllUsers() {
         List<User> users = userRepository.findAll();
         List<UserResponse> userResponses = new ArrayList<>();
 
         for (User user : users) {
             userResponses.add(toResponse(user));
         }
-        return (UserResponse) userResponses;
+        return userResponses;
+    }
+
+    // Request ve Response dönüştürücüler
+    public User toEntity(UserRequest userRequest) {
+        User user = new User();
+        user.setUserfullname(userRequest.getUsername());
+        user.setUseremail(userRequest.getEmail());
+        user.setUserpassword(userRequest.getPassword());
+        return user;
+    }
+
+    public UserResponse toResponse(User user) {
+        UserResponse response = new UserResponse();
+        response.setName(user.getUserfullname());
+        response.setEmail(user.getUseremail());
+        return response;
+    }
+
+    public UserResponse updateUser(UserRequest request, Long id) {
+        return null;
+    }
+
+    public void deleteUser(Long id) {
+
     }
 }

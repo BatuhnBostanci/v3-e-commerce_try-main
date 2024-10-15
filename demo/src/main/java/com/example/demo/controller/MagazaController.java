@@ -3,6 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.entitiy.Magaza;
 import com.example.demo.repository.MagazaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,13 +17,23 @@ public class MagazaController {
     private MagazaRepository magazaRepository;
 
     @GetMapping
-    public List<Magaza> getAllMagazas() {
-        return magazaRepository.findAll();
+    public ResponseEntity<List<Magaza>> getAllMagazas() {
+        try {
+            List<Magaza> magazas = magazaRepository.findAll();
+            return ResponseEntity.ok(magazas);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PostMapping
-    public Magaza saveMagaza(@RequestBody Magaza magaza) {
-        return magazaRepository.save(magaza);
+    public ResponseEntity<Magaza> saveMagaza(@RequestBody Magaza magaza) {
+        try {
+            Magaza savedMagaza = magazaRepository.save(magaza);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedMagaza);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
 
